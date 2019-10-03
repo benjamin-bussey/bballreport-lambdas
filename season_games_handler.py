@@ -33,13 +33,16 @@ def clean_data(game_data):
         home_team_id = entry_info['homeTeam']['id']
 
         entry_info['awayTeamid'] = away_team_id
-        entry_info['homeTeamid'] = home_team
+        entry_info['homeTeamid'] = home_team_id
 
         away_team = list(filter(lambda team: team['id'] == away_team_id, team_reference_info))[0]
         home_team = list(filter(lambda team: team['id'] == home_team_id, team_reference_info))[0]
 
         entry_info['awayTeam'] = away_team
         entry_info['homeTeam'] = home_team
+
+        entry_info['gameid'] = entry_info['id']
+        entry_info.pop('gameid')
 
         entry_info['scores'] = {}
         print(entry_info)
@@ -58,7 +61,6 @@ def upload_to_dynamodb(games):
 
 
 def season_games_handler(event, context):
-    api_key = '84b4b9ad-90dc-4cad-abd3-eb6e2f'
-    response_game_data = execute_request(api_key or os.getenv('api_key'), 'https://api.mysportsfeeds.com/v2.1/pull/nba/2019-2020-regular/games.json')
+    response_game_data = execute_request(os.getenv('api_key'), 'https://api.mysportsfeeds.com/v2.1/pull/nba/2019-2020-regular/games.json')
     clean_game_data = clean_data(response_game_data)
     upload_to_dynamodb(clean_game_data)

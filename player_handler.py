@@ -33,6 +33,8 @@ def clean_response(players):
             player.pop('currentTeam')
 
         player['sortKey'] = 'player|{}|{}'.format(player['id'], current_team)
+        player['playerid'] = player['id']
+        player.pop('id')
         all_players.append(player)
 
     return all_players
