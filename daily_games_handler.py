@@ -6,10 +6,8 @@ import os
 from datetime import date
 
 
-def get_daily_games(api_key):
-    today = date.today()
-    today_string = today.strftime('%Y%m%d')
-    url = 'https://api.mysportsfeeds.com/v2.1/pull/nba/2019-2020-regular/date/{}/games.json'.format(today_string)
+def get_daily_games(api_key, date):
+    url = 'https://api.mysportsfeeds.com/v2.1/pull/nba/2019-2020-regular/date/{}/games.json'.format(date)
 
     try:
         response = requests.get(
@@ -62,16 +60,15 @@ def execute_request(api_key, game_ids):
     return games
 
 
-def update_dynamodb(game_boxscores):
+def update_dynamodb(game_boxscores, date):
     client = boto3.client('dynamodb')
-    today = date.today().strftime('%Y-%m-%d')
 
     for game_id, stats, summary_stats in game_boxscores:
         client.update_item(
             TableName='bballreport',
             Key={
                 'season': '2019-2020',
-                'sortKey': 'regular|{}|{}'.format(today, game_id)
+                'sortKey': 'regular|{}|{}'.format(date, game_id)
             },
             UpdateExpression='set scores.stats = :b, scores.summaryStats = :s',
             ExpressionAttributeValues={
@@ -83,6 +80,8 @@ def update_dynamodb(game_boxscores):
 
 def daily_games_handler(event, context):
     api_key = os.getenv('api_key')
-    game_ids = get_daily_games(api_key)
+    today = date.today().strftime('%Y%m%d')
+
+    game_ids = get_daily_games(api_key, today)
     game_boxscores = execute_request(api_key, game_ids)
-    update_dynamodb(game_boxscores)
+    update_dynamodb(game_boxscores, today)
