@@ -67,8 +67,8 @@ def update_dynamodb(game_boxscores, date):
         client.update_item(
             TableName='bballreport',
             Key={
-                'season': '2019-2020',
-                'sortKey': 'regular|{}|{}'.format(date, game_id)
+                'hashKey': game_id,
+                'sortKey': '1'
             },
             UpdateExpression='set scores.stats = :b, scores.summaryStats = :s',
             ExpressionAttributeValues={

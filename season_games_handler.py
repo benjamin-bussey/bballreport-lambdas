@@ -26,26 +26,24 @@ def clean_data(game_data):
 
     for entry in game_data['games']:
         entry_info = entry['schedule']
-        entry_info['season'] = '2019-2020'
-        entry_info['sortKey'] = 'regular|{}|{}'.format(entry_info['startTime'].split('T')[0], entry_info['id'])
 
-        away_team_id = entry_info['awayTeam']['id']
-        home_team_id = entry_info['homeTeam']['id']
+        entry_info['hashKey'] = 'game{}'.format(entry_info['id'])
+        entry_info['sortKey'] = '1'
+        entry_info['season'] = '2019-2020-regular'
+        entry_info['date'] = entry_info['startTime'].split('T')[0]
+        entry_info.pop('id')
 
-        entry_info['awayTeamid'] = away_team_id
-        entry_info['homeTeamid'] = home_team_id
+        entry_info['awayTeamid'] = entry_info['awayTeam']['id']
+        entry_info['homeTeamid'] = entry_info['homeTeam']['id']
 
-        away_team = list(filter(lambda team: team['id'] == away_team_id, team_reference_info))[0]
-        home_team = list(filter(lambda team: team['id'] == home_team_id, team_reference_info))[0]
+        away_team = list(filter(lambda team: team['id'] == entry_info['awayTeamid'], team_reference_info))[0]
+        home_team = list(filter(lambda team: team['id'] == entry_info['homeTeamid'], team_reference_info))[0]
 
         entry_info['awayTeam'] = away_team
         entry_info['homeTeam'] = home_team
 
-        entry_info['gameid'] = entry_info['id']
-        entry_info.pop('gameid')
-
         entry_info['scores'] = {}
-        print(entry_info)
+
         all_games_info.append(entry_info)
     return all_games_info
 

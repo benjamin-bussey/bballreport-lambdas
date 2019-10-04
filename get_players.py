@@ -9,60 +9,38 @@ def setup_dynamodb():
     return table
 
 
-def query_dynamodb_all_players(table):
-    """
-
-    :param table: DynamoDB table being operated on
-    :return: dictionary of all players
-    """
+def get_player(table, player_id):
     response = table.query(
-        KeyConditionExpression=Key('season').eq('2019-2020') & Key('sortKey').begins_with('player|')
+        KeyConditionExpression=Key('hashKey').eq('player{}'.format(player_id))
     )
-
     return response['Items']
 
 
-def query_dynamodb_player_all_teams(table, player_id):
-    """
-
-    :param table: DynamoDB table being operated on
-    :param player_id: the numeric integer for the player
-    :return:
-    """
+def get_player_team(table, player_id, team_id):
     response = table.query(
-        KeyConditionExpression=Key('season').eq('2019-2020') & Key('sortKey').begins_with('player|{}'
-                                                                                          .format(player_id))
+        KeyConditionExpression=Key('hashKey').eq('player{}'.format(player_id)) & Key('sortKey').eq('2019-2020|{}'.format(team_id))
     )
-
     return response['Items']
 
 
-def query_dynamodb_player_team(table, player_id, team_id):
-    """
-
-    :param table: DynamoDB table being operated on
-    :param player_id: the numeric integer for the player
-    :param team_id: the specific team you're looking for the player's stats on
-    :return:
-    """
+def get_team_players(table, team_id):
     response = table.query(
-        KeyConditionExpression=Key('season').eq('2019-2020') & Key('sortKey').begins_with('player|{}|{}'
-                                                                                          .format(player_id, team_id))
+        IndexName='TeamPlayers',
+        KeyConditionExpression=Key('hashKey').eq(team_id)
     )
-
     return response['Items']
 
 
-def get_players_handler(event, context):
+def get_player_handler(event, context):
     table = setup_dynamodb()
-    return query_dynamodb_all_players(table)
+    return get_player(table, event['playerid'])
 
 
-def get_player_all_teams_handler(event, context):
+def get_player_team_handler(event, context)
     table = setup_dynamodb()
-    return query_dynamodb_player_all_teams(table, event['playerid'])
+    return get_player_team(table, event['playerid'], event['teamid'])
 
-
-def get_player_specific_team_handler(event, context):
+def get_team_players_handler(event, context):
     table = setup_dynamodb()
-    return query_dynamodb_player_team(table, event['playerid'], event['teamid'])
+    return get_team_players(table, event['teamid'])
+

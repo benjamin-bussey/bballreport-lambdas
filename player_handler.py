@@ -24,7 +24,7 @@ def clean_response(players):
     all_players = []
     for player_entry in players:
         player = player_entry['player']
-        player['season'] = '2019-2020'
+
         current_team = 'None'
         if player['currentTeam'] is not None:
             current_team = player['currentTeam']['id']
@@ -32,9 +32,12 @@ def clean_response(players):
         else:
             player.pop('currentTeam')
 
-        player['sortKey'] = 'player|{}|{}'.format(player['id'], current_team)
-        player['playerid'] = player['id']
+        player['hashKey'] = 'player{}'.format(player['id'])
+        player['sortKey'] = '2019-2020|{}'.format(current_team)
+
         player.pop('id')
+
+
         all_players.append(player)
 
     return all_players

@@ -9,36 +9,41 @@ def setup_dynamodb():
     return table
 
 
-def get_season_games(table, season, mode):
+def get_game(table, game_id):
     response = table.query(
-        KeyConditionExpression=Key('season').eq(season) & Key('sortKey').begins_with(mode)
+        KeyConditionExpression=Key('hashKey').eq('game{}'.format(game_id)) & Key('sortKey').eq('1')
     )
     return response['Items']
 
 
-def get_daily_games(table, date):
+def get_season_games(table, season):
     response = table.query(
-        KeyConditionExpression=Key('season').eq(2019-2020) & Key('sortKey').begins_with('regular|{}'.format(date))
+        IndexName='DailyGames',
+        KeyConditionExpression=Key('hashKey').eq(season)
     )
-
     return response['Items']
 
 
-# ToDo implement after adding GSI on gameID
-def get_game(table, season, date, game_id):
-    pass
+def get_daily_games(table, season, date):
+    response = table.query(
+        IndexName='DailyGames',
+        KeyConditionExpression=Key('hashKey').eq(season) & Key('sortKey').eq(date)
+    )
+    return response['Items']
+
 
 
 def get_season_games_handler(event, context):
     table = setup_dynamodb()
-    return get_season_games(table, event['season'], event['mode'])
+    return get_season_games(table, event['season'])
 
 
+# ToDo implement after adding GSI on season, date
 def get_daily_games_handler(event, context):
     table = setup_dynamodb()
-    return get_daily_games(table, event['date'])
+    return get_daily_games(table, event['season'], event['date'])
 
 
-# ToDo implement after adding GSI on gameID
 def get_game_handler(event, context):
-    pass
+    table = setup_dynamodb()
+    return get_game(table, event['gameid'])
