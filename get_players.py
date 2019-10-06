@@ -34,6 +34,10 @@ def get_player_team(table, player_id, season, team_id):
     :param team_id: the id of the team
     :return:
     """
+    print(player_id)
+    print(season)
+    print(team_id)
+
     response = table.query(
         KeyConditionExpression=Key('hashKey').eq('player{}'.format(player_id)) & Key('sortKey').eq('{}|{}'.format(season, team_id))
     )

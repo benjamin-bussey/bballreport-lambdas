@@ -37,7 +37,6 @@ def clean_response(players):
 
         player.pop('id')
 
-
         all_players.append(player)
 
     return all_players

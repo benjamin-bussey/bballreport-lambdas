@@ -55,6 +55,11 @@ def get_daily_games(table, season, date):
     return response['Items']
 
 
+# ToDo figure out implementation here considering two small GSI's on homeTeamid, awayTeamid or creating a separate team
+def get_team_games(table, team_id):
+    pass
+
+
 def get_season_games_handler(event, context):
     table = setup_dynamodb()
     return get_season_games(table, event['season'])
@@ -68,3 +73,8 @@ def get_daily_games_handler(event, context):
 def get_game_handler(event, context):
     table = setup_dynamodb()
     return get_game(table, event['gameid'])
+
+
+def get_team_games_handler(event, context):
+    table = setup_dynamodb()
+    return get_team_games(table, event['teamid'])
