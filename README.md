@@ -4,7 +4,7 @@ Collection of **FaaS Python scripts to be used with AWS lambda** to put/get/upda
 ### Contents
 * Data creation functions
   * All scripts with filename postfix handler are for accessing information from the MySportsFeeds website and creating a data model more tenable to my data access patterns.
-  * These functions require you to have an active subscriptions to MySportsFeeds
+  * These functions require you to have an active subscriptions to MySportsFeeds. You will need to set a Lambda environment variable "api_key": "YOUR-KEY-HERE"
   * To create your own DynamoDB table and wire it up to work with these, create a table of your choice and change the tablename within the script of your choosing
     * If you plan to use indexes for alternate access patterns, consult the AWS documentation on Global Secondary Indexes in DynamoDB to become more comfortable with them
   * All data creation lambdas will need BatchWriteItem, PutItem, and UpdateItem permissions on the DynamoDB service
@@ -20,7 +20,8 @@ Collection of **FaaS Python scripts to be used with AWS lambda** to put/get/upda
     * games
     * team
 3. Create methods on those resources and for each:
-  1. Specify the lambda functions to hook up
-  2. Force the requried QueryString parameters and select whicever authorizer you plan to use for validation
-  3. Create a mapping within the integration to map QueryString -> {name of event parameter(s) within the functions}
+    1. Specify the lambda functions to hook up
+    2. Force the requried QueryString parameters and select whichever authorizer you plan to use for validation
+    3. Create a mapping within the integration to map QueryString -> {name of event parameter(s) within the functions}
 4. Optionally secure your API by referencing the various methods found in the API Gateway documentation 
+5. Publish your API and access using whichever requests library you prefer passing relevant QueryStrings and authorization information
