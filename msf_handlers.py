@@ -24,7 +24,7 @@ def clean_response(data):
 
 
 def get_team_games_handler(event, context):
-    api_key = '84b4b9ad-90dc-4cad-abd3-eb6e2f' or os.getenv('api_key')
+    api_key = os.getenv('api_key')
 
     team_games = get_team_games(api_key, event['season'], event['teamid'])
     return clean_response(team_games)
