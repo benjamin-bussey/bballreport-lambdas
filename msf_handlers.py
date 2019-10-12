@@ -39,14 +39,3 @@ def get_game_handler(event, context):
     return get_game(api_key, event['season'], event['gameid'])
 
 
-if __name__ == '__main__':
-    response = requests.get(
-        url='https://api.mysportsfeeds.com/v2.1/pull/nba/2019-2020-regular/games/20191116-TOR-DAL/boxscore.json',
-        headers={
-            "Authorization": "Basic " + base64.b64encode(
-                '{}:{}'.format('84b4b9ad-90dc-4cad-abd3-eb6e2f', 'MYSPORTSFEEDS').encode('utf-8')).decode('ascii')
-        }
-    )
-
-    print(response)
-
