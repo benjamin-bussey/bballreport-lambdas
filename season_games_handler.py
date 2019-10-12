@@ -5,7 +5,6 @@ import os
 
 
 def execute_request(api_key, season):
-    #url = 'https://api.mysportsfeeds.com/v2.1/pull/nba/2019-2020-regular/games.json'
     url = 'https://api.mysportsfeeds.com/v2.1/pull/nba/{}/games.json'.format(season)
 
     try:
