@@ -17,7 +17,7 @@ def get_team_games(api_key, season, team_id):
 
 def get_game(api_key, season, game_id):
     response = requests.get(
-        url=' https://api.mysportsfeeds.com/v2.1/pull/nba/{}/games/{}/boxscore.json'.format(season, game_id),
+        url='https://api.mysportsfeeds.com/v2.1/pull/nba/{}/games/{}/boxscore.json'.format(season, game_id),
         headers={
             "Authorization": "Basic " + base64.b64encode(
                 '{}:{}'.format(api_key, 'MYSPORTSFEEDS').encode('utf-8')).decode('ascii')
@@ -43,7 +43,7 @@ def sort_teams(teams):
     east_teams = []
     west_teams = []
 
-    for team in teams:
+    for team in teams['teams']:
         if team['conferenceRank']['conferenceName'] == 'Eastern':
             east_teams.append(team)
         else:
@@ -56,6 +56,19 @@ def sort_teams(teams):
         "east": east_sorted,
         "west": west_sorted
     }
+
+
+def get_teams_season_stats(api_key, season):
+    response = requests.get(
+        url='https://api.mysportsfeeds.com/v2.1/pull/nba/{}/team_stats_totals.json'.format(season),
+        headers={
+            "Authorization": "Basic " + base64.b64encode(
+                '{}:{}'.format(api_key, 'MYSPORTSFEEDS').encode('utf-8')).decode('ascii')
+        }
+    )
+
+    return response.json()
+
 
 
 def get_team_games_handler(event, context):
@@ -74,3 +87,8 @@ def standings_handler(event, context):
     api_key = os.getenv('api_key')
     team_data = get_standings(api_key, event['season'])
     return sort_teams(team_data)
+
+
+def get_team_season_stats_handler(event, context):
+    api_key = os.getenv('api_key')
+    return get_teams_season_stats(api_key, event['season'])
